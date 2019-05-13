@@ -1,18 +1,18 @@
 # Final Project Progjar
 ## Spesifikasi Protocol
 1. Login
-**aut** **[username]** **[password]**
+- **aut** **[username]** **[password]**
 2. Logout
-**out** **[username]**
+- **out** **[username]**
 3. Image
-**img** **[username]** **[to]** **[file]**
+- **img** **[username]** **[to]** **[file]**
 4. Chat
-**send** **[username]** **[to]** **[msg]**
+- **send** **[username]** **[to]** **[msg]**
 5. Menu
-**menu**
+- **menu**
 6. Grup
-**grup** **send** **[username]** **[msg]**
-**grup** **img** **[username]** **[file]**
+- **grup** **send** **[username]** **[msg]**
+- **grup** **img** **[username]** **[file]**
 
 ## Fitur
 - Logout
