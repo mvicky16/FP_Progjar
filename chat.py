@@ -2,7 +2,7 @@ import sys
 import os
 import json
 import uuid
-from queue import Queue
+from Queue import *
 
 class Chat:
 	def __init__(self):
@@ -18,17 +18,26 @@ class Chat:
 			if (command=='auth'):
 				username=j[1].strip()
 				password=j[2].strip()
+                                print "auth {}" . format(username)
 				return self.autentikasi_user(username,password)
 			elif (command=='send'):
 				sessionid = j[1].strip()
 				usernameto = j[2].strip()
-				message = j[3].strip()
+                                message=""
+                                for w in j[3:]:
+                                    message="{} {}" . format(message,w)
 				usernamefrom = self.sessions[sessionid]['username']
+                                print "send message from {} to {}" . format(usernamefrom,usernameto)
 				return self.send_message(sessionid,usernamefrom,usernameto,message)
+                        elif (command=='inbox'):
+                                sessionid = j[1].strip()
+                                username = self.sessions[sessionid]['username']
+                                print "inbox {}" . format(sessionid)
+                                return self.get_inbox(username)
 			else:
-				return {'status': 'ERROR', 'message': 'Protocol Tidak Benar'}
+				return {'status': 'ERROR', 'message': '**Protocol Tidak Benar'}
 		except IndexError:
-			return {'status': 'ERROR', 'message': 'Protocol Tidak Benar'}
+			return {'status': 'ERROR', 'message': '--Protocol Tidak Benar'}
 	def autentikasi_user(self,username,password):
 		if (username not in self.users):
 			return { 'status': 'ERROR', 'message': 'User Tidak Ada' }
@@ -84,13 +93,13 @@ if __name__=="__main__":
 	#sesi = j.autentikasi_user('messi','surabaya')
 	#print sesi
 	tokenid = sesi['tokenid']
-	print j.proses("send {} henderson helloson " . format(tokenid))
+	print j.proses("send {} henderson hello gimana kabarnya son " . format(tokenid))
 	#print j.send_message(tokenid,'messi','henderson','hello son')
 	#print j.send_message(tokenid,'henderson','messi','hello si')
 	#print j.send_message(tokenid,'lineker','messi','hello si dari lineker')
 
 
-	#print j.get_inbox('messi')
+	print j.get_inbox('messi')
 
 
 
