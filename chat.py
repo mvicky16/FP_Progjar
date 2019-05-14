@@ -7,6 +7,7 @@ from Queue import *
 
 class Chat:
 	def __init__(self):
+		self.online_users = []
 		self.sessions = {}
 		self.users = {}
 		self.users['messi'] = {'nama': 'Lionel Messi', 'negara': 'Argentina',
@@ -23,7 +24,7 @@ class Chat:
 			if (command == 'auth'):
 				username = j[1].strip()
 				password = j[2].strip()
-				print "{} logged in" . format(username)
+				print "{} logging in" . format(username)
 				return self.autentikasi_user(username, password)
 			elif (command == 'send'):
 				sessionid = j[1].strip()
@@ -32,7 +33,7 @@ class Chat:
 				for w in j[3:]:
 					message = "{} {}" . format(message, w)
 				usernamefrom = self.sessions[sessionid]['username']
-				print "send message from {} to {}" . format(
+				print "sending message from {} to {}" . format(
 					usernamefrom, usernameto)
 				return self.send_message(sessionid, usernamefrom, usernameto, message)
 			elif (command == 'inbox'):
@@ -43,8 +44,8 @@ class Chat:
 			elif (command == 'logout'):
 				sessionid = j[1].strip()
 				username = self.sessions[sessionid]['username']
-				print "{} logged out" . format(username)
-				return {'status' : 'OK'}
+				print "{} logging out" . format(username)
+				return self.logout_user(sessionid)								
 			else:
 				return {'status': 'ERROR', 'message': '**Protocol Tidak Benar'}
 		except IndexError:
@@ -52,13 +53,22 @@ class Chat:
 
 	def autentikasi_user(self, username, password):
 		if (username not in self.users):
-			return {'status': 'ERROR', 'message': 'User Tidak Ada'}
+			return {'status': 'ERROR', 'message': 'User Tidak Ada'}		
 		if (self.users[username]['password'] != password):
 			return {'status': 'ERROR', 'message': 'Password Salah'}
+		if (username in self.online_users):
+			return {'status': 'ERROR', 'message': 'Already logged in'}
 		tokenid = str(uuid.uuid4())
 		self.sessions[tokenid] = {
 			'username': username, 'userdetail': self.users[username]}
+		self.online_users.append(username)
+		print self.online_users
 		return {'status': 'OK', 'tokenid': tokenid}
+
+	def logout_user(self, sessionid):
+		if (sessionid in self.sessions):
+			del self.sessions[sessionid]
+		return {'status' : 'OK'}
 
 	def get_user(self, username):
 		if (username not in self.users):

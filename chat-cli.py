@@ -73,6 +73,8 @@ class ChatClient:
 			return "Unexpected Error(?)"
 
 	def login(self, username, password):
+		if(self.tokenid != ""):
+			return "You already logged in"
 		string = "auth {} {} \r\n" . format(username, password)
 		result = self.sendstring(string)
 		if result['status'] == 'OK':
