@@ -42,7 +42,7 @@ class ChatClient:
 				print '*  Open inbox  		   |  inbox  	             *'
 				print '*  Send group message      |  sendgroup message      *'
 				print '*  Send group img/file     |  sendgroup filename     *'
-				print '******************************************************'
+				return '******************************************************'
 			else:
 				return "*Command not found, type `menu` to see all commands"
 		except IndexError:
