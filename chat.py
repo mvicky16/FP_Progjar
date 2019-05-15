@@ -45,7 +45,7 @@ class Chat:
 				sessionid = j[1].strip()
 				username = self.sessions[sessionid]['username']
 				print "{} logging out" . format(username)
-				return self.logout_user(sessionid)								
+				return self.logout_user(sessionid, username)								
 			else:
 				return {'status': 'ERROR', 'message': '**Protocol Tidak Benar'}
 		except IndexError:
@@ -57,17 +57,20 @@ class Chat:
 		if (self.users[username]['password'] != password):
 			return {'status': 'ERROR', 'message': 'Password Salah'}
 		if (username in self.online_users):
-			return {'status': 'ERROR', 'message': 'Already logged in'}
+			return {'status': 'ERROR', 'message': 'User already logged in'}
 		tokenid = str(uuid.uuid4())
 		self.sessions[tokenid] = {
 			'username': username, 'userdetail': self.users[username]}
 		self.online_users.append(username)
-		print self.online_users
+		print "{} logged in successfully" . format(username)
+		print "online users: {}" . format(self.online_users)
 		return {'status': 'OK', 'tokenid': tokenid}
 
-	def logout_user(self, sessionid):
+	def logout_user(self, sessionid, username):
 		if (sessionid in self.sessions):
 			del self.sessions[sessionid]
+			print "{} logged out successfully" . format(username)
+			print "online users: {}" . format(self.online_users)
 		return {'status' : 'OK'}
 
 	def get_user(self, username):
