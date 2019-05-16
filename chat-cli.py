@@ -12,7 +12,7 @@ class ChatClient:
 		self.server_address = (TARGET_IP, TARGET_PORT)
 		self.sock.connect(self.server_address)
 		self.tokenid = ""
-
+		self.username=""
 	def proses(self, cmdline):
 		j = cmdline.split(" ")
 		try:
@@ -31,6 +31,12 @@ class ChatClient:
 				return self.inbox()
 			elif (command == 'logout'):
 				return self.logout()
+			elif (command == 'create_group'):
+				groupname = j[1]
+				return self.create_group(groupname)
+			elif (command == 'join_group'):
+				groupname = j[1]
+				return self.join_group(groupname)
 			elif (command == 'menu'):
 				print '************************ Menu ************************'
 				print '*  action   		   | command  		     *'
@@ -103,6 +109,28 @@ class ChatClient:
 			return "{}" . format(json.dumps(result['messages']))
 		else:
 			return "Error, {}" . format(result['message'])
+
+	def create_group(self, groupname):
+		if (self.tokenid==""):
+			return "Error, non authorized"
+		string = "create_group {} {} \r\n" . format(self.tokenid, groupname)
+		result = self.sendstring(string)
+
+		if result['status'] == 'OK':
+			return "{}" . format(result['message'])
+		else:
+			return "Error, {}" .format(json.dump(result['message']))
+
+	def join_group(self, groupname):
+		if (self.tokenid==""):
+			return "Error, not authorized"
+		string ="join_group {} {} \r\n" .format(self.tokenid, groupname)
+		result = self.sendstring(string)
+
+		if (result['status']== 'OK'):
+			return "{}" .format(result['message'])
+		else:
+			return "Error, {}".format(json.dumps(result['message']))
 
 
 if __name__ == "__main__":
