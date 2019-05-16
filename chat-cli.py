@@ -21,22 +21,35 @@ class ChatClient:
 				username = j[1].strip()
 				password = j[2].strip()
 				return self.login(username, password)
+			
 			elif (command == 'send'):
 				usernameto = j[1].strip()
 				message = ""
 				for w in j[2:]:
 					message = "{} {}" . format(message, w)
 				return self.sendmessage(usernameto, message)
+			
 			elif (command == 'inbox'):
 				return self.inbox()
+			
 			elif (command == 'logout'):
 				return self.logout()
+			
 			elif (command == 'create_group'):
 				groupname = j[1]
 				return self.create_group(groupname)
+			
 			elif (command == 'join_group'):
 				groupname = j[1]
 				return self.join_group(groupname)
+			
+			elif (command == 'send_group'):
+				groupnameto = [1]
+				groupmessage=""
+				for w in j[2:]:
+					groupmessage="{} {}".format(groupmessage,w)
+				return self.send_group(groupnameto, groupmessage)
+			
 			elif (command == 'menu'):
 				print '************************ Menu ************************'
 				print '*  action   		   | command  		     *'
@@ -74,6 +87,7 @@ class ChatClient:
 		result = self.sendstring(string)
 		if result['status'] == 'OK':
 			self.tokenid = ""
+			self.username = ""
 			return "Log out successful"
 		else:
 			return "Unexpected Error(?)"
@@ -85,6 +99,7 @@ class ChatClient:
 		result = self.sendstring(string)
 		if result['status'] == 'OK':
 			self.tokenid = result['tokenid']
+			self.username = username
 			return "username {} logged in, token {} " .format(username, self.tokenid)
 		else:
 			return "Error, {}" . format(result['message'])
@@ -132,6 +147,16 @@ class ChatClient:
 		else:
 			return "Error, {}".format(json.dumps(result['message']))
 
+	def send_group(self, groupnameto, groupmessage):
+    		if(self.tokenid==""):
+    				return "Error, not authorized"
+				string ="send_group {} {} {}\r\n" .format(self.tokenid,groupnameto)
+				result =self.sendstring(string)
+
+				if result['status']=='OK':
+    					return "{}".format(result['message'])
+				else:
+    					return "Error, {}".format(json.dumps(result['message']))
 
 if __name__ == "__main__":
 	cc = ChatClient()
