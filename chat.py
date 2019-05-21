@@ -10,6 +10,7 @@ class Chat:
 		self.online_users = []
 		self.sessions = {}
 		self.users = {}
+		self.groups ={}
 		self.users['messi'] = {'nama': 'Lionel Messi', 'negara': 'Argentina',
 							   'password': 'surabaya', 'incoming': {}, 'outgoing': {}}
 		self.users['henderson'] = {'nama': 'Jordan Henderson', 'negara': 'Inggris',
@@ -18,17 +19,17 @@ class Chat:
 								 'password': 'surabaya', 'incoming': {}, 'outgoing': {}}
 
 	def proses(self, data):
-		j = data.split(" ")
+		j = data.strip().split(" ")
 		try:
-			command = j[0].strip()
+			command = j[0]
 			if (command == 'auth'):
-				username = j[1].strip()
-				password = j[2].strip()
+				username = j[1]
+				password = j[2]
 				print "{} logging in" . format(username)
 				return self.autentikasi_user(username, password)
 			elif (command == 'send'):
-				sessionid = j[1].strip()
-				usernameto = j[2].strip()
+				sessionid = j[1]
+				usernameto = j[2]
 				message = ""
 				for w in j[3:]:
 					message = "{} {}" . format(message, w)
@@ -37,15 +38,28 @@ class Chat:
 					usernamefrom, usernameto)
 				return self.send_message(sessionid, usernamefrom, usernameto, message)
 			elif (command == 'inbox'):
-				sessionid = j[1].strip()
+				sessionid = j[1]
 				username = self.sessions[sessionid]['username']
 				print "inbox {}" . format(sessionid)
 				return self.get_inbox(username)
 			elif (command == 'logout'):
-				sessionid = j[1].strip()
+				sessionid = j[1]
 				username = self.sessions[sessionid]['username']
 				print "{} logging out" . format(username)
-				return self.logout_user(sessionid, username)								
+				return self.logout_user(sessionid, username)
+			elif (command=='create_group'):
+				sessionid = j[1]
+				groupname = j[2]
+				return self.join_group(sessionid,groupname)
+			elif (command =='join_group'):
+				sessionid = j[1]
+				groupnameto = j[2]
+				sender = self.sessions[sessionid]['username']
+				groupmessage=""								
+				for w in j[3]:
+					groupmessage = "{} {}".format(groupmessage,w)
+				print groupmessage
+				return self.send_group(sender, groupnameto, groupmessage)
 			else:
 				return {'status': 'ERROR', 'message': '**Protocol Tidak Benar'}
 		except IndexError:
@@ -87,8 +101,7 @@ class Chat:
 		if (s_fr == False or s_to == False):
 			return {'status': 'ERROR', 'message': 'User Tidak Ditemukan'}
 
-		message = {'msg_from': s_fr['nama'],
-				   'msg_to': s_to['nama'], 'msg': message}
+		message = {'Type': 'Personal', 'msg_from': s_fr['nama'], 'msg_to': s_to['nama'], 'msg': message }
 		outqueue_sender = s_fr['outgoing']
 		inqueue_receiver = s_to['incoming']
 		try:
@@ -114,6 +127,54 @@ class Chat:
 
 		return {'status': 'OK', 'messages': msgs}
 
+	def logout(self,sessionsid):
+		if(sessionsid in self.sessions):
+    			del self.sessions[sessionsid]
+		return {'status':'OK'}
+
+	def create_group(self, sessionid, groupname):
+		if(groupname in self.groups):
+			return {'status': 'ERROR', 'message': 'group sudah ada'}
+		
+		admin = self.sessions[sessionid]['username']
+		self.groups[groupname] = {'admin':admin, 'user':[]}
+		self.groups[groupname]['users'].append(admin)
+		return {'status':'OK', 'message': '{} created'.format(groupname)}
+
+	def join_group(self, sessionid, groupname):
+    		if (groupname not in self.groups):
+			return { 'status': 'ERROR', 'message': 'Group tidak ada' }
+
+		member = self.sessions[sessionid]['username']
+		self.groups[groupname]['users'].append(member)
+		print self.groups[groupname]['users']
+		return {'status':'OK', 'message': '{} joined {}'.format(member, groupname)}
+
+	def sendto_group(self, username, groupnameto, groupmessage):
+		if (groupnameto not in self.groups):
+			return { 'status': 'ERROR', 'message': 'Group tujuan tidak ada' }
+
+		sender = self.get_user(username)
+		if (sender==False):
+			return {'status': 'ERROR', 'message': 'User Tidak Ditemukan'}
+
+		print groupmessage
+		for tousername in self.groups[groupnameto]['users']:
+			reciever = self.get_user(tousername)
+			message = {'Type': 'Group', 'msg_from': sender['nama'], 'msg_to': togroupname, 'msg': groupmessage }
+			outqueue_sender = sender['outgoing']
+			inqueue_receiver = reciever['incoming']
+			try:	
+				outqueue_sender[username].put(message)
+			except KeyError:
+				outqueue_sender[username]=Queue()
+				outqueue_sender[username].put(message)
+			try:
+				inqueue_receiver[username].put(message)
+			except KeyError:
+				inqueue_receiver[username]=Queue()
+
+		return {'status': 'OK', 'message': 'Message Sent'}	
 
 if __name__ == "__main__":
 	j = Chat()
