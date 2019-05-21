@@ -13,31 +13,31 @@ auth [username] [password]
 ```
 2. Logout
 ```sh
-- logout
+ logout
 ```
 3. Image
 ```sh
-- **img** **[username]** **[to]** **[file]**
+ **img** **[username]** **[to]** **[file]**
 ```
 4. Chat
 ```sh
-- send [usernameto] [message]
+ send [usernameto] [message]
 ```
 5. Menu
 ```sh
-- menu
+ menu
 ```
 6. Create Grup
 ```sh
-- create_group [groupname]
+ create_group [groupname]
 ```
 7. Join Group
 ```sh
-- join_group [groupname]
+ join_group [groupname]
 ```
 8. Send Group
 ```sh
-- sendto_group [groupname] [message]
+ sendto_group [groupname] [message]
 ```
 ## Fitur
 - Logout
