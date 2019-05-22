@@ -3,6 +3,7 @@ import os.path
 import uuid
 from glob import glob
 from datetime import datetime
+from datetime import timedelta
 
 class HttpServer:
 	def __init__(self):
@@ -47,8 +48,6 @@ class HttpServer:
 				return self.http_head(object_address)
 			elif (method=='OPTIONS'):
 				return self.http_options()
-			elif (method=='POST'):
-				return self.http_post()	
 			else:
 				return self.response(400,'Bad Request','',{})
 		except IndexError:
