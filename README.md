@@ -17,7 +17,7 @@ auth [username] [password]
 ```
 3. Image
 ```sh
- send_file [username] [filename]
+ send_file [usernameto] [filename]
 ```
 4. Chat
 ```sh
@@ -37,11 +37,11 @@ auth [username] [password]
 ```
 8. Send Group Message
 ```sh
- sendto_group [groupname] [message]
+ send_group [groupname] [message]
 ```
 9. Inbox Group
 ```sh
- inbox_group
+ inbox_group [groupname]
 ```
 10.Leave Group
 ```sh

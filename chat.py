@@ -163,7 +163,7 @@ class Chat:
 			if group_name not in self.groups:
 				break
 		index_admin = self.sessions[sessionid]['username']
-		self.groups[group_name] = {'group_name':group_name, 'users':[]}
+		self.groups[group_name] = {'group_name':group_name, 'incoming':[], 'users':[]}
 		self.groups[group_name]['users'].append(index_admin)
 		return {'status':'OK', 'messages': self.groups[group_name]}
 
@@ -267,21 +267,3 @@ class Chat:
 
 		return {'status': 'OK', 'message': 'File sent'}
 
-	def download_file(self, sessionid, filename, connection):
-		username = self.sessions[sessionid]['username']
-		print "{} download {}" . format(username, filename)
-
-		try:
-			file = open(os.path.join(username, filename), 'rb')
-		except IOError:
-			return {'status': 'Err', 'message': 'File tidak ditemukan'}
-			
-		result = connection.sendall("OK")
-		while True:
-			data = file.read(1024)
-			if not data:
-				result = connection.sendall("DONE")
-				break
-			connection.sendall(data)
-		file.close()
-		return
