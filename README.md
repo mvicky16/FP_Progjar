@@ -17,7 +17,7 @@ auth [username] [password]
 ```
 3. Image
 ```sh
- **img** **[username]** **[to]** **[file]**
+ send_file [username] [filename]
 ```
 4. Chat
 ```sh
@@ -35,9 +35,25 @@ auth [username] [password]
 ```sh
  join_group [groupname]
 ```
-8. Send Group
+8. Send Group Message
 ```sh
  sendto_group [groupname] [message]
+```
+9. Inbox Group
+```sh
+ inbox_group
+```
+10.Leave Group
+```sh
+ leave_group [groupname]
+```
+11. Inbox
+```sh
+ inbox
+```
+12. List Group
+```sh
+ list_group [groupname]
 ```
 ## Fitur
 - Logout
